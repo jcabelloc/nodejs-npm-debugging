@@ -7,7 +7,7 @@ const server = http.createServer((req, res) => {
     if (url=== '/') {
         res.write('<html>');
         res.write('<head><title>Mi primera pagina</title></head>');
-        res.write('<body><form action="/mensaje" method="POST"><input type="text" name="nombre-producto"></input><button type="submit">Enviar</button></form></body>');
+        res.write('<body><form action="/mensaje" method="POST"><input type="text" id="miinput" name="nombre-producto"></input><button type="submit">Enviar</button></form></body>');
         res.write('</html>');
         return res.end();
     }
@@ -19,15 +19,21 @@ const server = http.createServer((req, res) => {
             console.log(chunk);
             body.push(chunk);
         });
-        req.on('end', () => {
+        return req.on('end', () => {
             const txtBody = Buffer.concat(body).toString();
             console.log(txtBody)
             const mensaje = txtBody.split('=')[1];
-            fs.writeFileSync('mensaje.txt', mensaje);
+            //fs.writeFileSync('mensaje.txt', mensaje);
+            fs.writeFile('mensaje.txt', mensaje, err => {
+                res.statusCode = '302';
+                res.setHeader('Location', '/')
+                return res.end();
+            });
         })
+        /*
         res.statusCode = '302';
         res.setHeader('Location', '/')
-        return res.end();
+        return res.end(); */
 
 
     }
